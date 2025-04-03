@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+
+# Build the Docker image
+build_ml:
+  stage: build
+  script:
+    - docker build -t my_ml_service .
+  tags:
+    - docker
+
+# Run tests using pytest
+test_ml:
+  stage: test
+  script:
+    - pip install pytest httpx
+    - pytest > result.log; tail -n 10 result.log
+  tags:
+    - docker

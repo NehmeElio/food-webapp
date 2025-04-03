@@ -5,7 +5,7 @@ stages:
 # Build the Docker image
 build_ml:
   stage: build
-  image: docker:20.4.0
+  image: docker:20.10.7 
   script:
     - docker build -t my_ml_service .
 

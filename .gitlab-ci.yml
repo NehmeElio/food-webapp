@@ -21,5 +21,5 @@ test_ml:
     DOCKER_HOST: tcp://docker:2375  # Make the Docker daemon accessible
   script:
     - docker run --rm my_ml_service pytest > result.log; tail -n 10 result.log  # Run tests and show the last 10 lines of the log
-  tags:
-    - docker
+  # tags:
+  #   - docker

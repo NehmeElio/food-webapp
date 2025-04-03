@@ -7,18 +7,18 @@ WORKDIR /app
 # Copy the contents of the ml_service directory into the container at /app
 COPY ml_service/ /app/
 
-# # Install system dependencies (if needed)
-# RUN apt-get update && apt-get install -y \
-#     build-essential \
-#     libssl-dev \
-#     libffi-dev \
-#     python3-dev \
-#     && rm -rf /var/lib/apt/lists/*
+# Install system dependencies (if needed)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies from requirements.txt
 COPY ml_service/requirements.txt /app/requirements.txt
 # RUN pip install --upgrade pip
-RUN pip install -r /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt  # Add --no-cache-dir to prevent pip from caching packages
 
 # Expose the port the app will run on
 EXPOSE 8000

@@ -9,12 +9,7 @@ COPY ml_service/ /app/
 
 # Install system dependencies (if needed)
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libssl-dev \
-    libffi-dev \
-    python3-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    build-essential
 
 # Install Python dependencies from requirements.txt
 COPY ml_service/requirements.txt /app/requirements.txt

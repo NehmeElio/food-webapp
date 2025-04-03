@@ -6,6 +6,8 @@ stages:
 build_ml:
   stage: build
   image: docker:20.10.7 
+  services:
+    - docker:20.10.7-dind
   script:
     - docker build -t my_ml_service -f ml_service/Dockerfile .
 

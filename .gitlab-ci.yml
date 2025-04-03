@@ -12,7 +12,6 @@ build_ml:
     - docker build -t my_ml_service -f ml_service/Dockerfile .
   tags:
     - docker
-    - custom
 
 # Run tests using pytest
 test_ml:

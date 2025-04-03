@@ -14,7 +14,7 @@ RUN apt-get update && \
 
 
 # Install Python dependencies from requirements.txt
-COPY requirements.txt /app/requirements.txt
+COPY ml_service/requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
 # Expose the port the app will run on

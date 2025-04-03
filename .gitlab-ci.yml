@@ -5,22 +5,21 @@ stages:
 # Build the Docker image
 build_ml:
   stage: build
-  image: docker:20.10.7 
-  # services:
-  #   - docker:20.10.7-dind
-  # variables:
-  #   DOCKER_HOST: tcp://docker:2375
+  image: docker:20.10.7
   script:
     - docker build -t my_ml_service -f ml_service/Dockerfile .
   tags:
     - docker
 
-# Run tests using pytest
+# Run tests using pytest inside the built Docker image
 test_ml:
   stage: test
-  image: my_ml_service
+  image: docker:20.10.7  # Use the same Docker image for the job as build
+  services:
+    - docker:20.10.7-dind  # Enable Docker-in-Docker to access the built image
+  variables:
+    DOCKER_HOST: tcp://docker:2375  # Make the Docker daemon accessible
   script:
-    # - pip install pytest httpx 
-    - pytest > result.log; tail -n 10 result.log
+    - docker run --rm my_ml_service pytest > result.log; tail -n 10 result.log  # Run tests and show the last 10 lines of the log
   tags:
     - docker

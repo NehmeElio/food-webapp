@@ -15,11 +15,7 @@ RUN apt-get update && \
 
 # Install Python dependencies from requirements.txt
 COPY ml_service/requirements.txt /app/requirements.txt
-# Install setuptools and wheel
-RUN pip install --no-cache-dir setuptools wheel
-
-RUN pip install --no-cache-dir --disable-pip-version-check --no-use-pep517 -r /app/requirements.txt
-
+RUN pip install -r requirements.txt
 
 # Expose the port the app will run on
 EXPOSE 8000

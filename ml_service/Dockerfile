@@ -13,11 +13,12 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libffi-dev \
     python3-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies from requirements.txt
 COPY ml_service/requirements.txt /app/requirements.txt
-# RUN pip install --upgrade pip
+
 RUN pip install --no-cache-dir -r /app/requirements.txt  # Add --no-cache-dir to prevent pip from caching packages
 
 # Expose the port the app will run on

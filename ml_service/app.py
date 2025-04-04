@@ -162,6 +162,10 @@ async def global_exception_handler(request, exc):
         content={"message": f"An unexpected error occurred: {exc}"},
     )
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 # Run the FastAPI app using Uvicorn
 if __name__ == "__main__":
     import uvicorn

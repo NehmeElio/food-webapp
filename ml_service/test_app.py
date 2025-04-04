@@ -9,7 +9,6 @@ def test_predict_cuisine():
         json={"ingredients": ["Salt", "Olive", "Squash"]}
     )
     assert response.status_code == 200
-    assert "cuisines" in response.json()
     assert isinstance(response.json()["cuisines"], list)
 
 def test_predict_meal():
@@ -18,7 +17,6 @@ def test_predict_meal():
          json={"ingredients": ["Salt", "Olive", "Squash"]}
     )
     assert response.status_code == 200
-    assert "meals" in response.json()
     assert isinstance(response.json()["meals"], list)
 
 def test_predict_special():
@@ -27,5 +25,4 @@ def test_predict_special():
          json={"ingredients": ["Salt", "Olive", "Squash"]}
     )
     assert response.status_code == 200
-    assert "meals" in response.json()
     assert isinstance(response.json()["meals"], list)

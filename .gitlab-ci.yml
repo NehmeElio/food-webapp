@@ -4,25 +4,31 @@ stages:
 
 variables:
   DOCKER_DRIVER: overlay2
+  # Add this to use the Docker host from DinD
+  DOCKER_HOST: tcp://docker:2375
+  # Use TLS=false for simplicity in CI environment
+  DOCKER_TLS_CERTDIR: ""
 
 services:
   - docker:dind
 
-before_script:
-  - apt-get update && apt-get install -y docker.io curl
-  - docker info
-
 build-ml-service:
+  image: docker:latest
   stage: build
   script:
     - docker build -t ml-service ./ml-service
 
 test-ml-service:
+  image: docker:latest
   stage: test
   script:
-    - docker run -d -p 8000:8000 --name ml-test ml-service
+    - docker run -d --name ml-test ml-service
     - sleep 10  # give it time to start
     - |
-      # Example test - update with real API endpoints
-      curl --fail http://localhost:8000/health || (echo "API test failed" && exit 1)
+      # Use the container IP address instead of localhost
+      CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ml-test)
+      # Install curl in the Docker image
+      apk add --no-cache curl
+      # Test the service
+      curl --fail http://$CONTAINER_IP:8000/health || (echo "API test failed" && exit 1)
     - docker stop ml-test

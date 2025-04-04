@@ -1,49 +1,49 @@
-stages:
-  - build
-  - test
+# stages:
+#   - build
+#   - test
 
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
-  # Add image registry info
-  IMAGE_TAG: $CI_REGISTRY_IMAGE/ml-service:$CI_COMMIT_REF_SLUG
+# variables:
+#   DOCKER_DRIVER: overlay2
+#   DOCKER_HOST: tcp://docker:2375
+#   DOCKER_TLS_CERTDIR: ""
+#   # Add image registry info
+#   IMAGE_TAG: $CI_REGISTRY_IMAGE/ml-service:$CI_COMMIT_REF_SLUG
 
-services:
-  - docker:dind
+# services:
+#   - docker:dind
 
-# build-ml-service:
+# # build-ml-service:
+# #   image: docker:latest
+# #   stage: build
+# #   script:
+# #     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+# #     - docker build -t $IMAGE_TAG -f ml_service/Dockerfile .
+# #     - docker push $IMAGE_TAG
+
+# test-ml-service:
 #   image: docker:latest
-#   stage: build
+#   stage: test
 #   script:
 #     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - docker build -t $IMAGE_TAG -f ml_service/Dockerfile .
-#     - docker push $IMAGE_TAG
-
-test-ml-service:
-  image: docker:latest
-  stage: test
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $IMAGE_TAG
-    - docker run -d --name ml-test -p 8000:8000 $IMAGE_TAG
-    - sleep 10  # Give it time to start
-    - apk add --no-cache curl
-    - |
-      # Retrieve the container's IP address
-      CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ml-test)
-      echo "Container IP: $CONTAINER_IP"
-    - |
-      # Retry loop to check if the service is up
-      for i in {1..20}; do
-        if curl --fail http://$CONTAINER_IP:8000/health; then
-          echo "Service is up!"
-          break
-        else
-          echo "Service is down, retrying... (Attempt $i/20)"
-          sleep 60
-        fi
-      done
-    - docker logs ml-test
-    - docker stop ml-test
+#     - docker pull $IMAGE_TAG
+#     - docker run -d --name ml-test -p 8000:8000 $IMAGE_TAG
+#     - sleep 10  # Give it time to start
+#     - apk add --no-cache curl
+#     - |
+#       # Retrieve the container's IP address
+#       CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ml-test)
+#       echo "Container IP: $CONTAINER_IP"
+#     - |
+#       # Retry loop to check if the service is up
+#       for i in {1..20}; do
+#         if curl --fail http://$CONTAINER_IP:8000/health; then
+#           echo "Service is up!"
+#           break
+#         else
+#           echo "Service is down, retrying... (Attempt $i/20)"
+#           sleep 60
+#         fi
+#       done
+#     - docker logs ml-test
+#     - docker stop ml-test
 

@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ti2mTKDoHRDtBivhiTE2iZvVl/oU3H9YHlhcS8ewot4=",
+  "Source": "food-webapp-backend",
+  "BasePath": "_content/food-webapp-backend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

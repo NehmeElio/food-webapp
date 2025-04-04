@@ -62,5 +62,6 @@ test-ml-service:
       done
 
 
+
     - docker logs ml-test
     - docker stop ml-test

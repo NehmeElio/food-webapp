@@ -16,7 +16,8 @@ build-ml-service:
   image: docker:latest
   stage: build
   script:
-    - docker build -t ml-service ./ml-service
+    - docker build -t ml-service -f ml_Service/Dockerfile .
+
 
 test-ml-service:
   image: docker:latest

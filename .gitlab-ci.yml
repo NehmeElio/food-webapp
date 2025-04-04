@@ -39,7 +39,8 @@ test-ml-service:
     #       sleep 60
     #     fi
     #   done
-    - if curl --fail http://ml-test:8000/health; then
+    - |
+      if curl --fail http://ml-test:8000/health; then
         echo "Service is up!"
       else
         echo "Service is down, retrying..."

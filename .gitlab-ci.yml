@@ -4,10 +4,10 @@ stages:
 
 variables:
   DOCKER_DRIVER: overlay2
-  # Add this to use the Docker host from DinD
   DOCKER_HOST: tcp://docker:2375
-  # Use TLS=false for simplicity in CI environment
   DOCKER_TLS_CERTDIR: ""
+  # Add image registry info
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/ml-service:$CI_COMMIT_REF_SLUG
 
 services:
   - docker:dind
@@ -16,14 +16,18 @@ build-ml-service:
   image: docker:latest
   stage: build
   script:
-    - docker build -t ml-service -f ml_service/Dockerfile .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_TAG ./ml-service -f ml_service/Dockerfile .
+    - docker push $IMAGE_TAG
 
 
 test-ml-service:
   image: docker:latest
   stage: test
   script:
-    - docker run -d --name ml-test ml-service
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $IMAGE_TAG
+    - docker run -d --name ml-test $IMAGE_TAG
     - sleep 10  # give it time to start
     - |
       # Use the container IP address instead of localhost
@@ -31,5 +35,5 @@ test-ml-service:
       # Install curl in the Docker image
       apk add --no-cache curl
       # Test the service
-      curl --fail http://$CONTAINER_IP:8000/health || (echo "API test failed" && exit 1)
+      curl --fail http://localhost:8000/health || (echo "API test failed" && exit 1)
     - docker stop ml-test

@@ -101,7 +101,7 @@ class IngredientsRequest(BaseModel):
 @app.on_event("startup")
 async def startup():
     # Load all resources concurrently when the app starts
-    await load_all_resources()
+    asyncio.create_task(load_all_resources())
     print("All resources loaded successfully")
 
 @app.post("/predict/cuisine")

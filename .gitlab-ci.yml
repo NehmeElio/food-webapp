@@ -39,6 +39,6 @@ test-ml-service:
     #       sleep 60
     #     fi
     #   done
-    - if curl --fail http://ml-test:8000/health; thenecho "Service is up!"
+    - if curl --fail http://ml-test:8000/health; then echo "Service is up!"
     - docker logs ml-test
     - docker stop ml-test

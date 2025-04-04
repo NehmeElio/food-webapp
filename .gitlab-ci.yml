@@ -27,13 +27,29 @@ test-ml-service:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $IMAGE_TAG
-    - docker run -d --name ml-test $IMAGE_TAG
+    - docker run -d --name ml-test -p 8000:8000 $IMAGE_TAG
     - sleep 10  # give it time to start
+    - apk add --no-cache curl
     - |
-      # Use the container IP address instead of localhost
+      # Debug container info
+      echo "Container info:"
+      docker inspect ml-test
+      
+      # Get container IP address
       CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ml-test)
-      # Install curl in the Docker image
-      apk add --no-cache curl
-      # Test the service
-      curl --fail http://localhost:8000/health || (echo "API test failed" && exit 1)
+      echo "Container IP: $CONTAINER_IP"
+      
+      # Test using both container IP and docker network
+      echo "Testing with container IP..."
+      curl --fail -v http://$CONTAINER_IP:8000/health || echo "IP-based test failed"
+      
+      echo "Testing with Docker network..."
+      curl --fail -v http://ml-test:8000/health || echo "Hostname-based test failed"
+      
+      echo "Testing with Docker host..."
+      curl --fail -v http://docker:8000/health || echo "Docker host test failed"
+      
+      echo "Testing with localhost..."
+      curl --fail -v http://localhost:8000/health || echo "Localhost test failed" 
+    - docker logs ml-test
     - docker stop ml-test

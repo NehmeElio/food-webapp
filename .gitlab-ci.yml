@@ -12,13 +12,13 @@ variables:
 services:
   - docker:dind
 
-build-ml-service:
-  image: docker:latest
-  stage: build
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $IMAGE_TAG -f ml_service/Dockerfile .
-    - docker push $IMAGE_TAG
+# build-ml-service:
+#   image: docker:latest
+#   stage: build
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker build -t $IMAGE_TAG -f ml_service/Dockerfile .
+#     - docker push $IMAGE_TAG
 
 
 test-ml-service:
@@ -30,15 +30,15 @@ test-ml-service:
     - docker run -d --name ml-test -p 8000:8000 $IMAGE_TAG
     - sleep 10  # give it time to start
     - apk add --no-cache curl
-    - |
-      for i in {1..20}; do
-        if curl --fail http://ml-test:8000/health; then
-          echo "Service is up!"
-          break
-        else
-          echo "Waiting for service to start... (Attempt $i/20)"
-          sleep 60
-        fi
-      done
+    # - |
+    #   for i in {1..20}; do
+        
+    #       break
+    #     else
+    #       echo "Waiting for service to start... (Attempt $i/20)"
+    #       sleep 60
+    #     fi
+    #   done
+    - if curl --fail http://ml-test:8000/health; thenecho "Service is up!"
     - docker logs ml-test
     - docker stop ml-test

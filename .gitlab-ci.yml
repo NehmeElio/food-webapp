@@ -52,14 +52,15 @@ test-ml-service:
     #   # echo "Testing with localhost..."
     #   # curl --fail -v http://localhost:8000/health || echo "Localhost test failed" 
     - for i in {1..20}; do
-      if curl --fail http://ml-test:8000/health; then
-        echo "Service is up!"
-        break
-      else
-        echo "Waiting for service to start..."
-        sleep 60
-      fi
-     done
+        if curl --fail http://ml-test:8000/health; then
+          echo "Service is up!"
+          break
+        else
+          echo "Waiting for service to start..."
+          sleep 60
+        fi
+      done
+
 
     - docker logs ml-test
     - docker stop ml-test

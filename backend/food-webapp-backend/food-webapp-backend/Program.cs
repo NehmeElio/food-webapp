@@ -1,3 +1,4 @@
+using DotNetEnv;
 using food_webapp_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,28 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSwaggerGen();
 // Get the connection string from your configuration (e.g., appsettings.json)
+// Get the connection string from the configuration and replace the password placeholder
+// Get the connection string from the configuration and replace the password placeholder
+// Load environment variables from the .env file
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Add the DbContext to the DI container
-builder.Services.AddDbContext<FoodContext>(options =>
-    options.UseNpgsql(connectionString)
-);
+builder.Services.AddDbContext<FoodContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy => policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+app.UseCors("AllowAllOrigins");  // E
 
 // Configure the HTTP request pipeline.
 {

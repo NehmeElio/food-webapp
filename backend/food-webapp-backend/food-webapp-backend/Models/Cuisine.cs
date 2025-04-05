@@ -8,4 +8,6 @@ public partial class Cuisine
     public string? CuisineGrouped { get; set; }
 
     public long CuisineGroupedId { get; set; }
+
+    public virtual ICollection<RecipeCuisine> RecipeCuisines { get; set; } = new List<RecipeCuisine>();
 }

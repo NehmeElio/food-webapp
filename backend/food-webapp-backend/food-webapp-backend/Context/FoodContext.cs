@@ -23,11 +23,19 @@ public partial class FoodContext : DbContext
 
     public virtual DbSet<Recipe> Recipes { get; set; }
 
+    public virtual DbSet<RecipeCuisine> RecipeCuisines { get; set; }
+
+    public virtual DbSet<RecipeIngredient> RecipeIngredients { get; set; }
+
+    public virtual DbSet<RecipeMeal> RecipeMeals { get; set; }
+
+    public virtual DbSet<RecipeSpecial> RecipeSpecials { get; set; }
+
     public virtual DbSet<SpecialConsideration> SpecialConsiderations { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=aws-0-eu-west-3.pooler.supabase.com;Port=5432;Username=postgres.cbtuvrnhyrfyntbpmbsx;Password=${POSTGRES_PASSWORD};Database=postgres;SearchPath=public");
+        => optionsBuilder.UseNpgsql("Host=aws-0-eu-west-3.pooler.supabase.com;Port=5432;Username=postgres.cbtuvrnhyrfyntbpmbsx;Password=elionehme2002;Database=postgres;SearchPath=public");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -96,16 +104,94 @@ public partial class FoodContext : DbContext
                 .HasColumnName("recipe_id");
             entity.Property(e => e.CookingTime).HasColumnName("cooking_time");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Equipment).HasColumnName("equipment");
             entity.Property(e => e.ImageFilename).HasColumnName("image_filename");
-            entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Instructions).HasColumnName("instructions");
-            entity.Property(e => e.Occasion).HasColumnName("occasion");
-            entity.Property(e => e.Ratings).HasColumnName("ratings");
             entity.Property(e => e.Servings).HasColumnName("servings");
-            entity.Property(e => e.Technique).HasColumnName("technique");
             entity.Property(e => e.Title).HasColumnName("title");
-            entity.Property(e => e.Type).HasColumnName("type");
+        });
+
+        modelBuilder.Entity<RecipeCuisine>(entity =>
+        {
+            entity.HasKey(e => e.RecipeCuisineId).HasName("recipe_cuisine_pkey");
+
+            entity.ToTable("recipe_cuisine");
+
+            entity.Property(e => e.RecipeCuisineId)
+                .ValueGeneratedNever()
+                .HasColumnName("recipe_cuisine_id");
+            entity.Property(e => e.CuisineGroupedId).HasColumnName("cuisine_grouped_id");
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+
+            entity.HasOne(d => d.CuisineGrouped).WithMany(p => p.RecipeCuisines)
+                .HasForeignKey(d => d.CuisineGroupedId)
+                .HasConstraintName("recipe_cuisine_cuisine_grouped_id_fkey");
+
+            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeCuisines)
+                .HasForeignKey(d => d.RecipeId)
+                .HasConstraintName("recipe_cuisine_recipe_id_fkey");
+        });
+
+        modelBuilder.Entity<RecipeIngredient>(entity =>
+        {
+            entity.HasKey(e => e.RecipeIngredientId).HasName("recipe_ingredient_pkey");
+
+            entity.ToTable("recipe_ingredient");
+
+            entity.Property(e => e.RecipeIngredientId)
+                .ValueGeneratedNever()
+                .HasColumnName("recipe_ingredient_id");
+            entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+
+            entity.HasOne(d => d.Ingredient).WithMany(p => p.RecipeIngredients)
+                .HasForeignKey(d => d.IngredientId)
+                .HasConstraintName("recipe_ingredient_ingredient_id_fkey");
+
+            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
+                .HasForeignKey(d => d.RecipeId)
+                .HasConstraintName("recipe_ingredient_recipe_id_fkey");
+        });
+
+        modelBuilder.Entity<RecipeMeal>(entity =>
+        {
+            entity.HasKey(e => e.RecipeMealId).HasName("recipe_meal_pkey");
+
+            entity.ToTable("recipe_meal");
+
+            entity.Property(e => e.RecipeMealId)
+                .ValueGeneratedNever()
+                .HasColumnName("recipe_meal_id");
+            entity.Property(e => e.MealId).HasColumnName("meal_id");
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+
+            entity.HasOne(d => d.Meal).WithMany(p => p.RecipeMeals)
+                .HasForeignKey(d => d.MealId)
+                .HasConstraintName("recipe_meal_meal_id_fkey");
+
+            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeMeals)
+                .HasForeignKey(d => d.RecipeId)
+                .HasConstraintName("recipe_meal_recipe_id_fkey");
+        });
+
+        modelBuilder.Entity<RecipeSpecial>(entity =>
+        {
+            entity.HasKey(e => e.RecipeSpecialId).HasName("recipe_special_pkey");
+
+            entity.ToTable("recipe_special");
+
+            entity.Property(e => e.RecipeSpecialId)
+                .ValueGeneratedNever()
+                .HasColumnName("recipe_special_id");
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+            entity.Property(e => e.SpecialConsiderationId).HasColumnName("special_consideration_id");
+
+            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeSpecials)
+                .HasForeignKey(d => d.RecipeId)
+                .HasConstraintName("recipe_special_recipe_id_fkey");
+
+            entity.HasOne(d => d.SpecialConsideration).WithMany(p => p.RecipeSpecials)
+                .HasForeignKey(d => d.SpecialConsiderationId)
+                .HasConstraintName("recipe_special_special_consideration_id_fkey");
         });
 
         modelBuilder.Entity<SpecialConsideration>(entity =>

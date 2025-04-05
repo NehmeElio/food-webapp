@@ -8,4 +8,6 @@ public partial class Ingredient
     public string? Ingredient1 { get; set; }
 
     public long IngredientId { get; set; }
+
+    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 }

@@ -9,25 +9,21 @@ public partial class Recipe
 
     public string? Description { get; set; }
 
-    public string? Ingredients { get; set; }
-
     public string? Instructions { get; set; }
 
     public string? CookingTime { get; set; }
 
     public string? Servings { get; set; }
 
-    public string? Ratings { get; set; }
-
-    public string? ImageFilename { get; set; }
-
-    public string? Type { get; set; }
-
-    public string? Technique { get; set; }
-
-    public string? Equipment { get; set; }
-
-    public string? Occasion { get; set; }
+    public byte[]? ImageFilename { get; set; }
 
     public long RecipeId { get; set; }
+
+    public virtual ICollection<RecipeCuisine> RecipeCuisines { get; set; } = new List<RecipeCuisine>();
+
+    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+
+    public virtual ICollection<RecipeMeal> RecipeMeals { get; set; } = new List<RecipeMeal>();
+
+    public virtual ICollection<RecipeSpecial> RecipeSpecials { get; set; } = new List<RecipeSpecial>();
 }

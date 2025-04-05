@@ -3,11 +3,17 @@ import React, { useState } from "react";
 const IngredientsDropdown = ({ ingredients, selectedIngredients, handleChange, handleRemove }) => {
   const [isOpen, setIsOpen] = useState(false); // Toggle dropdown visibility
 
-  // Toggle dropdown
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  // Toggle dropdown with preventDefault to stop form submission
+  const toggleDropdown = (e) => {
+    e.preventDefault(); // Prevent the event from bubbling up to the form
+    setIsOpen(!isOpen);
+  };
 
   // Handle the selection of an option
-  const handleOptionClick = (ingredientId) => {
+  const handleOptionClick = (e, ingredientId) => {
+    e.preventDefault(); // Prevent form submission
+    e.stopPropagation(); // Stop event bubbling
+    
     // Add ingredient to selected list if not already selected
     if (!selectedIngredients.includes(ingredientId)) {
       handleChange(ingredientId);
@@ -17,18 +23,34 @@ const IngredientsDropdown = ({ ingredients, selectedIngredients, handleChange, h
   return (
     <div className="card">
       <h3>Ingredients</h3>
-      <div className="dropdown-header" onClick={toggleDropdown}>
-        <button>{isOpen ? "Close" : "Select Ingredients"}</button>
+      <div className="dropdown-header">
+        <button 
+          type="button" // Explicitly set button type to prevent form submission
+          onClick={toggleDropdown}
+        >
+          {isOpen ? "Close" : "Select Ingredients"}
+        </button>
       </div>
 
-      {/* Dropdown list */}
+      {/* Dropdown list with scroll */}
       {isOpen && (
-        <div className="dropdown-list">
+        <div className="dropdown-list" style={{ 
+          maxHeight: "200px", 
+          overflowY: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "4px"
+        }}>
           {ingredients.map((ingredient) => (
             <div
               key={ingredient.id}
               className="dropdown-option"
-              onClick={() => handleOptionClick(ingredient.id)}
+              onClick={(e) => handleOptionClick(e, ingredient.id)}
+              style={{
+                padding: "8px 12px",
+                cursor: "pointer",
+                backgroundColor: selectedIngredients.includes(ingredient.id) ? "#f0f0f0" : "transparent",
+                borderBottom: "1px solid #eee"
+              }}
             >
               {ingredient.name}
             </div>
@@ -44,11 +66,14 @@ const IngredientsDropdown = ({ ingredients, selectedIngredients, handleChange, h
             <div key={ingredientId} className="selected-item">
               {ingredient?.name}
               <button
-                type="button"
-                onClick={() => handleRemove(ingredientId, "ingredient")}
+                type="button" // Explicitly set button type
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent form submission
+                  handleRemove(ingredientId, "ingredient");
+                }}
                 className="remove-btn"
               >
-                X
+                Remove
               </button>
             </div>
           );

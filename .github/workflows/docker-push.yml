@@ -26,6 +26,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ml_service/Dockerfile # Use the current directory as the build context
+          context: .  # Use the root directory as the build context
+          file: ml_service/Dockerfile  # Specify the path to the Dockerfile
           push: true   # Push the image to Docker Hub after building it
           tags: ${{ secrets.DOCKER_USERNAME }}/ml-service:latest  # Tag your image
